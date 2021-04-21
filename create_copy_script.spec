@@ -3,8 +3,8 @@
 block_cipher = None
 
 
-a = Analysis(['D:\\Programs\\Python_Files\\create_copy\\create_copy_script.py'],
-             pathex=['D:\\Programs\\Python_Files\\create_copy'],
+a = Analysis(['D:\\Programs\\Python_Files\\create_copy_py\\create_copy_script.py'],
+             pathex=['D:\\Programs\\Python_Files\\create_copy_py'],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -30,4 +30,4 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=True )
+          console=True , icon='D:\\Programs\\Python_Files\\create_copy_py\\icons\\copy2.ico')
