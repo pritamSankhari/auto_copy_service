@@ -9,10 +9,12 @@ from db_query import DB_Query
 
 import msvcrt
 
-def throwError(msg,exitFlag):
+def throwError(msg,exitFlag,forceExit = False):
   print(msg)
   print("Press any key to terminate ...")
-  msvcrt.getch()
+
+  if not forceExit:
+    msvcrt.getch()
   
   if(exitFlag):
     quit()
@@ -31,7 +33,7 @@ except Exception:
 ###########################################################################       
 
 if(len(sys.argv) < 2):
-    throwError(msg="Script ID is not passed",exitFlag=True)
+    throwError(msg="Script ID is not passed",exitFlag=True,forceExit=True)
     
 
 script_id = sys.argv[1]
@@ -41,7 +43,7 @@ query = DB_Query('config\db_py_config.json')
 myresult = query.getScriptInDetails(script_id)
 
 if(len(myresult) == 0):
-    throwError(msg="Script not found",exitFlag=True)
+    throwError(msg="Script not found",exitFlag=True,forceExit=True)
     
 
 for x in myresult:
@@ -63,14 +65,14 @@ print("Destination: " + dest_name + " |path:[ "+ dest +" ]")
 #############################################
 if(not os.path.isdir(src)):
   query.updateScriptProcessStatus(-1,script_id)
-  throwError(msg= src +" directory(source)  does not exist !",exitFlag=True)
+  throwError(msg= src +" directory(source)  does not exist !",exitFlag=True,forceExit=True)
   
 #############################################
 # Check destination directory exists or not #
 #############################################
 if(not os.path.isdir(dest)):
   query.updateScriptProcessStatus(-1,script_id)
-  throwError(msg= dest +" directory(destination) does not exist !",exitFlag=True)
+  throwError(msg= dest +" directory(destination) does not exist !",exitFlag=True,forceExit=True)
   
 
 

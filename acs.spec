@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['D:\\Programs\\Python_Files\\auto_copy_service\\acs.py'],
+a = Analysis(['acs.py'],
              pathex=['D:\\Programs\\Python_Files\\auto_copy_service'],
              binaries=[],
              datas=[],
