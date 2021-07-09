@@ -53,42 +53,61 @@ for x in myresult:
   dest_name = x[4]
   dest = x[5]
 
+backup_dir = query.getBackupPath(script_id)
 
+if backup_dir:
+  backup_name = backup_dir[2] 
+  backup_dir = backup_dir[1]
+else:
+  query.updateBackupProcessStatus(-1,script_id)
+  throwError(msg= "No backup path found !",exitFlag=True)
+
+########################################
+# Check backup directory exists or not #
+########################################
+if(not os.path.isdir(backup_dir)):
+  query.updateBackupProcessStatus(-1,script_id)
+  throwError(msg= src +" directory(source)  does not exist !",exitFlag=True)
 
 #############################################
 # Check source directory exists or not #
 #############################################
 if(not os.path.isdir(src)):
-#   query.updateScriptProcessStatus(-1,script_id)
+  query.updateBackupProcessStatus(-1,script_id)
   throwError(msg= src +" directory(source)  does not exist !",exitFlag=True)
-
-backup_dir ="D:\\San1_Data\\backup_for_test"
 
 # current_date = temp_date = datetime.now().strftime('%Y-%m-%d')
 
+####################################################
+# last_time = current_time = datetime.now().strftime('%H_%M')
+last_time = current_time = datetime.now().strftime('%Y_%m_%d')
+####################################################
 
-last_time = current_time = datetime.now().strftime('%H_%M')
-# last_time = current_time = datetime.now().strftime('%Y_%m_%d')
+query.updateBackupProcessStatus(os.getpid(),script_id)
 
-
+print("Auto Backup is running ("+backup_name+") ...")
+print("Checking for backup ...")
 try:
     while True:
         
         # Interval for checking backup
         # time.sleep(300)
         time.sleep(10)
+       
+        
 
-        print("Checking for backup ...")
-
-        current_time = datetime.now().strftime('%H_%M')
-        # current_time = datetime.now().strftime('%Y_%m_%d')
+        #################################################### 
+        # current_time = datetime.now().strftime('%H_%M')
+        current_time = datetime.now().strftime('%Y_%m_%d')
+        #################################################### 
 
         src_all_files = os.listdir(src)
         
         # if current time or date is greater than last backup time or date
         if(current_time > last_time):
-            
-            backup_dir_last = os.path.join(backup_dir, "backup_"+ last_time + "_" + src_name)
+            time.sleep(100)
+
+            backup_dir_last = os.path.join(backup_dir, backup_name + "_" + last_time + "_" + src_name)
             os.mkdir(backup_dir_last)
             
             for src_file in src_all_files :
@@ -97,8 +116,11 @@ try:
 
                 # get created time or date
                 created_time = os.path.getctime(file_full_name) 
-                created_time = datetime.fromtimestamp(created_time).strftime('%H_%M')
-                # created_time = datetime.fromtimestamp(created_time).strftime('%Y_%m_%d')
+
+                ####################################################
+                # created_time = datetime.fromtimestamp(created_time).strftime('%H_%M')
+                created_time = datetime.fromtimestamp(created_time).strftime('%Y_%m_%d')
+                ####################################################
 
                 #  if file created time or date less than current time or date
                 if(created_time < current_time):
@@ -111,11 +133,17 @@ try:
                     shutil.copyfile(file_full_name , backup_dir_last + "\\" + src_file)
                     os.remove(file_full_name)
 
-            
-            print("Last Backup Done at " + current_time + " !")
+                    query.removeFromLog(script_id,src_file)
+
+            os.system("cls")
+            print("Auto Backup is running ("+backup_name+") ...")
+            print("Checking for backup ...")
+            print("Last Backup Done as " + current_time + " !")
             last_time = current_time
 
 except KeyboardInterrupt:
     print('Auto Backup is Terminated')
 
 throwError("Warning ! Auto Backup Service has been closed !")    
+
+query.updateBackupProcessStatus(0,script_id)
